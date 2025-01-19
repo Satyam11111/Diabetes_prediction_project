@@ -99,52 +99,111 @@ Let me know if you'd like to see the complete code or any specific part in more 
 
 ---
 
-## **Diabetes Prediction Project**
-
-### 1. **Data Collection**  
-- **Methods**: The data was sourced from the **Pima Indians Diabetes Dataset**, a widely used benchmark dataset available on Kaggle.  
-- **Frequency**: This dataset was static, but a similar approach could involve regular updates if applied in real-world scenarios.  
-
-### 2. **Data Storage**  
-- **Storage Solutions**: The data was initially stored locally for preprocessing and managed using **Pandas** for data manipulation.  
-- **Data Management**: Implemented effective file organization to ensure version control and seamless transitions between preprocessing and modeling phases.
-
-### 3. **Data Processing Lifecycle**  
-- **Pipeline Overview**:  
-  1. Handled missing values using **median imputation** for numeric fields like insulin levels.  
-  2. Scaled numerical features using **MinMaxScaler** to bring them to a uniform range.  
-  3. Balanced the dataset using **SMOTE** to address class imbalance.  
-- **Challenges**:  
-  - Missing values in key features posed a significant challenge, resolved by imputation techniques.  
-  - Imbalance in class distribution required careful oversampling to avoid overfitting.  
-
-### 4. **Model Creation**  
-- **Model Selection**: Tried Logistic Regression, Random Forest, and SVM models. Random Forest performed best with an **accuracy of 85%** due to its robustness against overfitting.  
-- **Performance Metrics**: Evaluated models based on **accuracy, precision, recall, and F1-score** to ensure a balanced evaluation.  
-- **Hyperparameter Tuning**: Used **GridSearchCV** to fine-tune the Random Forest model for optimal performance.
-
-### 5. **Model Deployment**  
-- **Deployment Strategy**: The final model was deployed using **Flask**, allowing seamless integration into a web-based application.  
-- **API Creation**: Created an API to accept user input (e.g., glucose levels, BMI) and return predictions in real-time.  
-- **Monitoring**: Logged API interactions and monitored performance metrics to ensure reliability over time.  
-
-### 6. **Storytelling**  
-- Presented the project as a step towards enabling early diabetes detection, especially for communities with limited access to healthcare.  
-- Simplified technical terms to explain the impact of feature engineering and model tuning to non-technical audiences.  
-
-### 7. **Visualization Tools**  
-- Used **Matplotlib** and **Seaborn** to create heatmaps and distribution plots for feature importance and class distribution.  
-
-### 8. **Continuous Learning**  
-- Gained insights into imbalanced classification problems and refined my skills in deploying machine learning models.  
-
 
 
 ---
 
-### General Presentation Tips:
-1. **Start with the problem and objective**: Explain the motivation and real-world impact of the project.  
-2. **Detail challenges and solutions**: This demonstrates problem-solving abilities and technical expertise.  
-3. **Highlight tools and frameworks**: Mention libraries (Pandas, Scikit-learn), platforms (AWS, Flask), and databases (MongoDB).  
-4. **Use visualizations**: Include examples of graphs or dashboards you created, which make explanations more engaging.  
-5. **End with learnings and impact**: Connect your project outcomes to practical benefits or insights gained.  
+### **Project 1: Diabetes Prediction**
+
+**Introduction:**
+Hello, Ma’am! My first project is focused on **Diabetes Prediction**. The objective of this project was to predict whether a patient is diabetic or not based on various health-related features. I used a well-known dataset from **Kaggle**, specifically the **Pima Indians Diabetes Dataset**, which contains medical data for women aged 21 years and older.
+
+**Dataset Overview:**
+The dataset includes 768 instances and 9 features (columns), such as:
+- **Age**: Age of the patient
+- **BMI**: Body Mass Index
+- **Pregnancies**: Number of pregnancies the patient has had
+- **BloodPressure**: Diastolic blood pressure (in mm Hg)
+- **SkinThickness**: Triceps skinfold thickness (in mm)
+- **Insulin**: 2-hour serum insulin level (in mu U/ml)
+- **DiabetesPedigreeFunction**: A score based on family history that indicates the likelihood of diabetes
+- **Outcome**: The target variable, where 0 indicates non-diabetic and 1 indicates diabetic
+
+The dataset has 500 **non-diabetic** and 268 **diabetic** instances.
+
+**Data Preprocessing:**
+I applied **StandardScaler** to standardize the data, as scaling the features helps the machine learning model perform better, especially in algorithms like SVM. I used the following approach:
+- `StandardScaler().fit_transform(x)` to standardize the dataset.
+- Split the dataset into training and test sets using `train_test_split()` with a 80-20 ratio.
+
+**Model Selection:**
+For this classification problem, I used **Support Vector Machine (SVM)**, which is a powerful supervised learning algorithm suitable for binary classification tasks like this one. The SVM algorithm is effective for distinguishing between two classes (diabetic and non-diabetic) by finding the optimal hyperplane that separates them.
+
+```python
+from sklearn import svm
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# Load data (Assuming 'data' is preprocessed and cleaned)
+X = data.drop('Outcome', axis=1)
+y = data['Outcome']
+
+# Standardizing the data
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Splitting the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Initializing and training the model
+clf = svm.SVC(kernel='linear')
+clf.fit(X_train, y_train)
+
+# Predictions
+train_predictions = clf.predict(X_train)
+test_predictions = clf.predict(X_test)
+
+# Accuracy on training data
+train_accuracy = accuracy_score(y_train, train_predictions)
+# Accuracy on test data
+test_accuracy = accuracy_score(y_test, test_predictions)
+
+print(f"Training Accuracy: {train_accuracy}")
+print(f"Test Accuracy: {test_accuracy}")
+```
+
+**Testing with Sample Input:**
+To check the prediction for a new patient, I created a sample input data with the following attributes:
+- **Pregnancies**: 5
+- **Glucose**: 166
+- **Blood Pressure**: 72
+- **Skin Thickness**: 19
+- **Insulin**: 175
+- **BMI**: 22.7
+- **DiabetesPedigreeFunction**: 0.6
+- **Age**: 51
+
+I used this input to see if the model correctly classifies the patient as diabetic or not. I converted the input data into a NumPy array for the model to process.
+
+```python
+input_data = (5, 166, 72, 19, 175, 22.7, 0.6, 51)
+input_array = np.asarray(input_data)
+input_scaled = scaler.transform([input_array])
+prediction = clf.predict(input_scaled)
+print(f"Prediction: {'Diabetic' if prediction[0] == 1 else 'Non-diabetic'}")
+```
+
+**Challenges Faced:**
+- One challenge I faced was ensuring that the data was correctly preprocessed and scaled, as incorrect scaling can affect model performance. 
+- Handling missing or invalid data was also a challenge, which I managed by performing **Exploratory Data Analysis (EDA)** to check for any anomalies and handling missing values appropriately.
+
+**Other Algorithms Tried:**
+Initially, I tried other machine learning algorithms such as:
+- **Logistic Regression**: A simpler classifier but did not perform as well as SVM in this case.
+- **Random Forest**: A powerful ensemble method, but SVM had a better classification accuracy in this case.
+- **K-Nearest Neighbors (KNN)**: KNN was not optimal for this dataset as it was more sensitive to feature scaling, and did not perform as well on the test set.
+
+**EDA and Feature Engineering:**
+- I performed **Exploratory Data Analysis (EDA)** to understand the relationships between the features and the target variable.
+- I used **correlation matrices** and **box plots** to identify potential features and outliers.
+- Feature selection was done based on domain knowledge and the correlation between features.
+
+**Conclusion:**
+- The final model, **Support Vector Machine (SVM)** with a **linear kernel**, performed well on the test set with a high accuracy rate.
+- The project helped me understand how to preprocess data, select the right model, and evaluate model performance using metrics like accuracy.
+- I was able to deploy the model to predict whether new input data would classify a patient as diabetic or non-diabetic.
+
+---
+
+
